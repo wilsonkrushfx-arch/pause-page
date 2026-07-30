@@ -179,32 +179,45 @@
   </div>
 
 <script>
-  let secondsLeft = 8;
-  const goBtn = document.getElementById('goBtn');
-  const secLeft = document.getElementById('secLeft');
+  const COOLDOWN_MS = 10 * 60 * 1000; // 10分間のクールダウン
 
-  const timer = setInterval(() => {
-    secondsLeft -= 1;
-    if (secondsLeft <= 0) {
-      clearInterval(timer);
-      goBtn.disabled = false;
-      goBtn.textContent = 'それでも見る';
-    } else {
-      secLeft.textContent = secondsLeft;
-    }
-  }, 1000);
+  function isSnoozed(){
+    const until = localStorage.getItem('ytSnoozeUntil');
+    return until && Date.now() < parseInt(until, 10);
+  }
+
+  if (isSnoozed()) {
+    // クールダウン中は画面を出さずそのままYouTubeへ通す
+    window.location.href = "https://www.youtube.com/";
+  } else {
+    initPage();
+  }
+
+  function initPage(){
+    let secondsLeft = 8;
+    const goBtn = document.getElementById('goBtn');
+    const secLeft = document.getElementById('secLeft');
+
+    const timer = setInterval(() => {
+      secondsLeft -= 1;
+      if (secondsLeft <= 0) {
+        clearInterval(timer);
+        goBtn.disabled = false;
+        goBtn.textContent = 'それでも見る';
+      } else {
+        secLeft.textContent = secondsLeft;
+      }
+    }, 1000);
+  }
 
   function stopHere(){
     document.getElementById('mainScreen').classList.add('hide');
     document.getElementById('doneScreen').classList.add('show');
   }
 
-  function goToClaude(){
-    window.location.href = "https://claude.ai/code";
-  }
-
   function proceed(){
-    // 実際に視聴に進む場合の遷移先。空にしておけばこの画面のままになります。
+    // 10分間は再介入しないようスヌーズを設定してから遷移
+    localStorage.setItem('ytSnoozeUntil', String(Date.now() + COOLDOWN_MS));
     window.location.href = "https://www.youtube.com/";
   }
 </script>
