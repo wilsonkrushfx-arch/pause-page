@@ -100,7 +100,11 @@
     width: 100%;
     max-width: 300px;
   }
-  button{
+  .actions > *{
+    width: 100%;
+    text-align: center;
+  }
+  button, a.btn-stop{
     font-family: inherit;
     font-size: 15px;
     padding: 15px 20px;
@@ -109,8 +113,11 @@
     cursor: pointer;
     transition: opacity 0.2s ease, transform 0.15s ease;
     letter-spacing: 0.02em;
+    text-decoration: none;
+    display: inline-block;
+    box-sizing: border-box;
   }
-  button:active{ transform: scale(0.98); }
+  a.btn-stop:active, button:active{ transform: scale(0.98); }
   .btn-stop{
     background: var(--ink);
     color: var(--bg-1);
@@ -167,7 +174,7 @@
     <h1>いい判断です。</h1>
     <p class="sub">よければClaudeに移動しましょう。</p>
     <div class="actions">
-      <button class="btn-stop" onclick="goToClaude()">Claudeを開く</button>
+      <a class="btn-stop" id="claudeLink" href="https://claude.ai/code">Claudeを開く</a>
     </div>
   </div>
 
