@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ひと呼吸</title>
+<style>
+  :root{
+    --bg-1: #131a2b;
+    --bg-2: #1f2b47;
+    --ink: #eef1f8;
+    --ink-dim: #a7b0c9;
+    --ring: #7f9cf5;
+    --ring-soft: rgba(127,156,245,0.25);
+    --accent: #f2b880;
+  }
+  *{ box-sizing: border-box; }
+  html,body{
+    margin:0; padding:0; height:100%;
+    background: radial-gradient(120% 120% at 50% 20%, var(--bg-2) 0%, var(--bg-1) 60%);
+    color: var(--ink);
+    font-family: -apple-system, "Hiragino Sans", "Yu Gothic", sans-serif;
+    overscroll-behavior: none;
+  }
+  body{
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding: 32px 24px 40px;
+  }
+  .eyebrow{
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    color: var(--ink-dim);
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+  .ring-wrap{
+    position: relative;
+    width: 168px;
+    height: 168px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom: 36px;
+  }
+  .ring-wrap::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    border: 1px solid var(--ring-soft);
+  }
+  .breath{
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--ring) 0%, #4b5fb8 65%, transparent 100%);
+    box-shadow: 0 0 40px var(--ring-soft);
+    animation: breathe 8s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%   { transform: scale(0.72); opacity: 0.75; }
+    45%  { transform: scale(1.15); opacity: 1; }
+    55%  { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(0.72); opacity: 0.75; }
+  }
+  .breath-label{
+    position:absolute;
+    font-size: 13px;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+    animation: fadeText 8s ease-in-out infinite;
+  }
+  @keyframes fadeText{
+    0%   { content: "吸って"; }
+  }
+  h1{
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.6;
+    max-width: 320px;
+    margin: 0 0 10px;
+    letter-spacing: 0.02em;
+  }
+  p.sub{
+    font-size: 14px;
+    color: var(--ink-dim);
+    max-width: 280px;
+    line-height: 1.7;
+    margin: 0 0 36px;
+  }
+  .actions{
+    display:flex;
+    flex-direction:column;
+    gap: 12px;
+    width: 100%;
+    max-width: 300px;
+  }
+  button{
+    font-family: inherit;
+    font-size: 15px;
+    padding: 15px 20px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+    letter-spacing: 0.02em;
+  }
+  button:active{ transform: scale(0.98); }
+  .btn-stop{
+    background: var(--ink);
+    color: var(--bg-1);
+    font-weight: 600;
+  }
+  .btn-go{
+    background: transparent;
+    color: var(--ink-dim);
+    border: 1px solid rgba(255,255,255,0.14);
+  }
+  .btn-go:disabled{
+    opacity: 0.35;
+    cursor: default;
+  }
+  .count{
+    font-size: 12px;
+    color: var(--ink-dim);
+    margin-top: 4px;
+    min-height: 16px;
+  }
+  .done-screen{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+  }
+  .done-screen.show{ display:flex; }
+  .hide{ display:none !important; }
+  .checkmark{
+    font-size: 40px;
+    margin-bottom: 18px;
+  }
+</style>
+</head>
+<body>
+
+  <div id="mainScreen">
+    <div class="eyebrow">一 呼 吸 お い て か ら</div>
+
+    <div class="ring-wrap">
+      <div class="breath"></div>
+    </div>
+
+    <h1>これは、今のストレスを<br>本当に軽くしてくれますか？</h1>
+    <p class="sub">後で見返しても後悔しない理由が、ひとつでも浮かびますか。</p>
+
+    <div class="actions">
+      <button class="btn-stop" onclick="stopHere()">やめておく</button>
+      <button class="btn-go" id="goBtn" disabled onclick="proceed()">それでも見る (<span id="secLeft">8</span>)</button>
+    </div>
+  </div>
+
+  <div class="done-screen" id="doneScreen">
+    <div class="checkmark">◎</div>
+    <h1>いい判断です。</h1>
+    <p class="sub">このタブは閉じて大丈夫です。</p>
+  </div>
+
+<script>
+  let secondsLeft = 8;
+  const goBtn = document.getElementById('goBtn');
+  const secLeft = document.getElementById('secLeft');
+
+  const timer = setInterval(() => {
+    secondsLeft -= 1;
+    if (secondsLeft <= 0) {
+      clearInterval(timer);
+      goBtn.disabled = false;
+      goBtn.textContent = 'それでも見る';
+    } else {
+      secLeft.textContent = secondsLeft;
+    }
+  }, 1000);
+
+  function stopHere(){
+    document.getElementById('mainScreen').classList.add('hide');
+    document.getElementById('doneScreen').classList.add('show');
+  }
+
+  function proceed(){
+    // 実際に視聴に進む場合の遷移先。空にしておけばこの画面のままになります。
+    window.location.href = "https://www.youtube.com/";
+  }
+</script>
+
+</body>
+</html>
