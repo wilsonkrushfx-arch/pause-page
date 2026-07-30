@@ -188,7 +188,7 @@
 
   if (isSnoozed()) {
     // クールダウン中は画面を出さずそのままYouTubeへ通す
-    window.location.href = "https://www.youtube.com/";
+    window.location.href = "https://www.youtube.com./";
   } else {
     initPage();
   }
@@ -218,7 +218,7 @@
   function proceed(){
     // 10分間は再介入しないようスヌーズを設定してから遷移
     localStorage.setItem('ytSnoozeUntil', String(Date.now() + COOLDOWN_MS));
-    window.location.href = "https://www.youtube.com/";
+    window.location.href = "https://www.youtube.com./";
   }
 </script>
 
