@@ -165,7 +165,10 @@
   <div class="done-screen" id="doneScreen">
     <div class="checkmark">◎</div>
     <h1>いい判断です。</h1>
-    <p class="sub">Claudeに移動します…</p>
+    <p class="sub">よければClaudeに移動しましょう。</p>
+    <div class="actions">
+      <button class="btn-stop" onclick="goToClaude()">Claudeを開く</button>
+    </div>
   </div>
 
 <script>
@@ -187,9 +190,10 @@
   function stopHere(){
     document.getElementById('mainScreen').classList.add('hide');
     document.getElementById('doneScreen').classList.add('show');
-    setTimeout(() => {
-      window.location.href = "https://claude.ai";
-    }, 1200);
+  }
+
+  function goToClaude(){
+    window.location.href = "https://claude.ai";
   }
 
   function proceed(){
