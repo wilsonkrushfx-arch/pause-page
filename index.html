@@ -104,7 +104,7 @@
     width: 100%;
     text-align: center;
   }
-  button, a.btn-stop{
+  button, a.btn-stop, a.btn-go{
     font-family: inherit;
     font-size: 15px;
     padding: 15px 20px;
@@ -165,7 +165,7 @@
 
     <div class="actions">
       <button class="btn-stop" onclick="stopHere()">やめておく</button>
-      <button class="btn-go" id="goBtn" disabled onclick="proceed()">それでも見る (<span id="secLeft">8</span>)</button>
+      <a class="btn-go" id="goBtn" href="javascript:void(0)" style="pointer-events:none; opacity:0.35;">それでも見る (<span id="secLeft">8</span>)</a>
     </div>
   </div>
 
@@ -180,6 +180,7 @@
 
 <script>
   const COOLDOWN_MS = 10 * 60 * 1000; // 10分間のクールダウン
+  const SHORTCUT_URL = "shortcuts://run-shortcut?name=" + encodeURIComponent("猶予タイマー");
 
   function isSnoozed(){
     const until = localStorage.getItem('ytSnoozeUntil');
@@ -187,23 +188,35 @@
   }
 
   if (isSnoozed()) {
-    // クールダウン中は画面を出さずそのままショートカットへ通す
-    window.location.href = "shortcuts://";
+    // クールダウン中は8秒待たせず、即タップ可能な状態で表示する
+    initPage(true);
   } else {
-    initPage();
+    initPage(false);
   }
 
-  function initPage(){
-    let secondsLeft = 8;
+  function initPage(skipCountdown){
     const goBtn = document.getElementById('goBtn');
     const secLeft = document.getElementById('secLeft');
 
+    function enableGoBtn(){
+      goBtn.style.pointerEvents = 'auto';
+      goBtn.style.opacity = '1';
+      goBtn.href = SHORTCUT_URL;
+      goBtn.setAttribute('onclick', "localStorage.setItem('ytSnoozeUntil', String(Date.now() + " + COOLDOWN_MS + "))");
+      goBtn.textContent = 'それでも見る';
+    }
+
+    if (skipCountdown) {
+      enableGoBtn();
+      return;
+    }
+
+    let secondsLeft = 8;
     const timer = setInterval(() => {
       secondsLeft -= 1;
       if (secondsLeft <= 0) {
         clearInterval(timer);
-        goBtn.disabled = false;
-        goBtn.textContent = 'それでも見る';
+        enableGoBtn();
       } else {
         secLeft.textContent = secondsLeft;
       }
@@ -213,12 +226,6 @@
   function stopHere(){
     document.getElementById('mainScreen').classList.add('hide');
     document.getElementById('doneScreen').classList.add('show');
-  }
-
-  function proceed(){
-    // 10分間は再介入しないようスヌーズを設定してから、ショートカットアプリへ
-    localStorage.setItem('ytSnoozeUntil', String(Date.now() + COOLDOWN_MS));
-    window.location.href = "shortcuts://";
   }
 </script>
 
